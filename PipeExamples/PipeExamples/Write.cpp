@@ -16,16 +16,20 @@ int main(void)
 		OPEN_EXISTING,
 		0,
 		NULL);
-	if (hPipe != INVALID_HANDLE_VALUE)
+	while (true)
 	{
-		WriteFile(hPipe,
-			"Hello Pipe\n",
-			12,   // = length of string + terminating '\0' !!!
-			&dwWritten,
-			NULL);
-
-		CloseHandle(hPipe);
+		if (hPipe != INVALID_HANDLE_VALUE)
+		{
+			WriteFile(hPipe,
+				"Hello Pipe\n",
+				12,   // = length of string + terminating '\0' !!!
+				&dwWritten,
+				NULL);
+		}
+		system("pause");
 	}
+	CloseHandle(hPipe);
 
+	
 	return (0);
 }
