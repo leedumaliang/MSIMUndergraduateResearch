@@ -8,7 +8,7 @@ int main(void)
 	HANDLE hPipe;
 	char buffer[1024];
 	DWORD dwRead;
-
+	DWORD dwWritten;
 
 	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\Pipe"),
 		PIPE_ACCESS_DUPLEX | PIPE_TYPE_BYTE | PIPE_READMODE_BYTE,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
@@ -29,6 +29,12 @@ int main(void)
 
 				/* do something with data in buffer */
 				printf("%s", buffer);
+
+				//WriteFile(hPipe,
+				//	"Read File\n",
+				//	12,   // = length of string + terminating '\0' !!!
+				//	&dwWritten,
+				//	NULL);
 			}
 		}
 
