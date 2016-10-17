@@ -54,7 +54,7 @@ namespace DESVisualizer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Event event1 = new Event();
+            event1 = new Event();
             event1.DrawEvent(graphics);
         }
 
@@ -63,6 +63,13 @@ namespace DESVisualizer
             Arc arc1 = new Arc(0, 1);
             arc1.DrawArc(graphics);
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            event1.HighlightEvent(graphics);
+        }
+
+        private Event event1;
     }
 }
 
@@ -81,6 +88,12 @@ public class Event
             (location), 100, size, size);
         graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
 
+    }
+    public void HighlightEvent(System.Drawing.Graphics graphics)
+    {
+        System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
+            (location), 100, size, size);
+        graphics.DrawEllipse(System.Drawing.Pens.Yellow, rectangle);
     }
     private int id;
     private int location;
@@ -103,8 +116,9 @@ public class Arc
     }
     public void DrawArc(System.Drawing.Graphics graphics)
     {
-        Rectangle rect = new Rectangle(25 + (current * 100), 85 - (difference * 10), 100 + (difference * 100), 35 + (int)(Math.Pow(10, difference)));
+        int height = 35 + (int)(Math.Pow(10, difference));
         Pen blackPen = new Pen(Color.Black, 1);
+        Rectangle rect = new Rectangle(25 + (current * 100), 85 - height, 100 + (difference * 100), height);
 
         // Create start and sweep angles on ellipse.
         float startAngle = 0.0F;
