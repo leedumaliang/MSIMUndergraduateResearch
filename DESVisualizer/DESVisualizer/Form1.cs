@@ -8,6 +8,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+public class Event
+{
+    public static int nextID = 1; 
+    public Event()
+    {
+        id = nextID++;
+    }
+    public void DrawEvent(System.Drawing.Graphics graphics)
+    {
+        System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
+            (100 * id), 50, 50, 50);
+        graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
+
+    }
+    int id;
+
+}
+
+public class Arc
+{
+
+}
+
 namespace DESVisualizer
 {
     public partial class Form1 : Form
@@ -22,19 +45,11 @@ namespace DESVisualizer
 
         private System.Drawing.Graphics graphics;
 
-        private void DrawIt(int offset)
-        {
-            System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
-                (100 * offset), 50, 50, 50);
-            graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DrawIt(0); 
-            DrawIt(1); 
-            DrawIt(2); 
-            DrawIt(3); 
+            Event event1 = new Event();
+            event1.DrawEvent(graphics);
         }
         
         private void drawArc(int current, int next)
@@ -54,10 +69,6 @@ namespace DESVisualizer
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            DrawIt(0);
-            DrawIt(1);
-            DrawIt(2);
-            DrawIt(3);
             //drawArc(0);
             drawArc(1, 0);
             drawArc(0, 1);
