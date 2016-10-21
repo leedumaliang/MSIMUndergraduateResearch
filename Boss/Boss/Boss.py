@@ -1,4 +1,5 @@
 # I'm the biggest boss that you seen thus far.
+# Cause it's just another day in the life of the goddamn boss
 
 import subprocess
 import sys
