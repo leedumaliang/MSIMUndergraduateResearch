@@ -13,6 +13,7 @@ void FileIO::OutputScheduleEvent(std::string eventName, double time)
 	file.open("VisualizationFile.txt", std::ofstream::app);
 	file << "Scheduled " << eventName << " at " << time << std::endl;
 	file.close();
+	std::cout << "Event scheduled\n";
 }
 
 void FileIO::OutputExecuteEvent(std::string eventName, double time)
@@ -20,6 +21,7 @@ void FileIO::OutputExecuteEvent(std::string eventName, double time)
 	file.open("VisualizationFile.txt", std::ofstream::app);
 	file << "Execute " << eventName << " at " << time << std::endl;
 	file.close();
+	std::cout << "Event executed\n";
 }
 
 FileIO * FileIO::Instance()

@@ -7,7 +7,7 @@ using namespace std;
 
 void main()
 {
-	cout << "Normal Events\n";
+	//cout << "Normal Events\n";
 	Sink sink1("Sink1");
 	SSSQ sssq1("SSSQ1", &sink1, new Triangular(1, 3, 5));
 	Source source1A("Source1A", &sssq1, new Triangular(2, 3, 4), 15);
