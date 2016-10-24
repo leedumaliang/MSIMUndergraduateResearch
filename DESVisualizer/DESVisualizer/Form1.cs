@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace DESVisualizer
 {
@@ -17,11 +18,11 @@ namespace DESVisualizer
             InitializeComponent();
             //DrawIt(0);
             graphics = this.CreateGraphics();
-            this.Paint += new PaintEventHandler(pictureBox1_Paint); 
+            this.Paint += new PaintEventHandler(pictureBox1_Paint);
         }
 
         private System.Drawing.Graphics graphics;
-
+        StreamReader sr = new StreamReader("event_net_list.txt");
 
         
         //private void drawArc(int current, int next)
@@ -70,6 +71,12 @@ namespace DESVisualizer
         }
 
         private Event event1;
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+                int ev = sr.Read();
+                Console.Write((char)ev);
+        }
     }
 }
 
