@@ -74,8 +74,16 @@ namespace DESVisualizer
 
         private void button4_Click(object sender, EventArgs e)
         {
-                int ev = sr.Read();
-                Console.Write((char)ev);
+            string ev = sr.ReadLine();
+            char eventName = ev[0];
+            char[] eventEdges = new char[ev.Length / 2];
+            Console.Write((char)eventName);
+            for (int i = 0; i < ev.Length / 2; i++)
+            {
+                eventEdges[i] = ev[i * 2 + 2];
+                Console.Write((char)eventEdges[i]);
+            }
+            Console.WriteLine();
         }
     }
 }
