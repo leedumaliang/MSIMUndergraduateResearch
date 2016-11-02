@@ -19,6 +19,7 @@ namespace DESVisualizer
             //DrawIt(0);
             graphics = this.CreateGraphics();
             this.Paint += new PaintEventHandler(pictureBox1_Paint);
+            eventList = new List<Event>();
         }
 
         private System.Drawing.Graphics graphics;
@@ -55,7 +56,7 @@ namespace DESVisualizer
 
         private void button1_Click(object sender, EventArgs e)
         {
-            event1 = new Event();
+            Event event1 = new Event(1, null);
             event1.DrawEvent(graphics);
         }
 
@@ -67,38 +68,54 @@ namespace DESVisualizer
 
         private void button3_Click(object sender, EventArgs e)
         {
-            event1.HighlightEvent(graphics);
+            foreach(Event ev in eventList)
+            {
+                ev.DrawEvent(graphics);
+            }
+            //event1.HighlightEvent(graphics);
         }
 
-        private Event event1;
+        private List<Event> eventList;
 
         private void button4_Click(object sender, EventArgs e)
         {
             string ev = sr.ReadLine();
             char eventName = ev[0];
-            char[] eventEdges = new char[ev.Length / 2];
+            List<int> eventEdges = new List<int>(); 
             Console.Write((char)eventName);
             for (int i = 0; i < ev.Length / 2; i++)
             {
-                eventEdges[i] = ev[i * 2 + 2];
-                Console.Write((char)eventEdges[i]);
+                eventEdges.Add((int)Char.GetNumericValue(ev[i * 2 + 2]));
+            }
+            foreach(int _edge in eventEdges)
+            {
+                Console.WriteLine((int)_edge);
             }
             Console.WriteLine();
+            eventList.Add(new Event(eventName, eventEdges));
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
 
 public class Event
 {
-    public static int nextID = 1;
-    public Event()
+    public Event(int _id, List<int> _edges) 
     {
-        id = nextID++;
+        id = _id;
+        edges = new List<int>();
+        edges = _edges;
         location = id * 100;
         size = 50;
     }
     public void DrawEvent(System.Drawing.Graphics graphics)
     {
+        Console.Write((string)"Drawing Event");
         System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
             (location), 100, size, size);
         graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
@@ -110,7 +127,8 @@ public class Event
             (location), 100, size, size);
         graphics.DrawEllipse(System.Drawing.Pens.Yellow, rectangle);
     }
-    private int id;
+    public int id { get; }
+    private List<int> edges;
     private int location;
     private int size;
 
@@ -143,7 +161,7 @@ public class Arc
         graphics.DrawArc(blackPen, rect, startAngle, sweepAngle);
 
     }
-    private int id;
+    public int id { get; set; }
     private int current;
     private int next;
     private int difference;
