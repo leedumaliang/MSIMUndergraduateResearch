@@ -20,11 +20,13 @@ namespace DESVisualizer
             graphics = this.CreateGraphics();
             this.Paint += new PaintEventHandler(pictureBox1_Paint);
             eventList = new List<Event>();
+            arcList = new List<Arc>();
         }
 
         private System.Drawing.Graphics graphics;
-        StreamReader sr = new StreamReader("event_net_list.txt");
-
+        private StreamReader sr = new StreamReader("event_net_list.txt");
+        private List<Event> eventList;
+        private List<Arc> arcList;
         
         //private void drawArc(int current, int next)
         //{
@@ -54,52 +56,52 @@ namespace DESVisualizer
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void DrawEvents_Click(object sender, EventArgs e)
         {
-            Event event1 = new Event(1, null);
-            event1.DrawEvent(graphics);
+            foreach (Event ev in eventList)
+            {
+                ev.DrawEvent(graphics); 
+            }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void DrawArcs_Click(object sender, EventArgs e)
         {
-            Arc arc1 = new Arc(0, 1);
-            arc1.DrawArc(graphics);
+            foreach (Arc arc in arcList)
+            {
+                arc.DrawArc(graphics);
+            }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ImportButton_Click(object sender, EventArgs e)
         {
-            foreach(Event ev in eventList)
+            int edgeCount = 0; 
+            while (sr.Peek() >= 0)
             {
-                ev.DrawEvent(graphics);
+                string ev = sr.ReadLine();
+                int eventName = ev[0] - '0';
+                List<int> eventEdges = new List<int>(); 
+                //Console.Write((char)eventName);
+                for (int i = 0; i < ev.Length / 2; i++)
+                {
+                    eventEdges.Add(edgeCount++);
+                    int edge = (int)char.GetNumericValue(ev[i * 2 + 2]);
+                    arcList.Add(new Arc(eventName, edge)); 
+                    //eventEdges.Add((int)Char.GetNumericValue(ev[i * 2 + 2]));
+                }
+                //foreach(int _edge in eventEdges)
+                //{
+                //    Console.WriteLine((int)_edge);
+                //}
+                //Console.WriteLine();
+                eventList.Add(new Event(eventName, eventEdges));
             }
-            //event1.HighlightEvent(graphics);
-        }
-
-        private List<Event> eventList;
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            string ev = sr.ReadLine();
-            char eventName = ev[0];
-            List<int> eventEdges = new List<int>(); 
-            Console.Write((char)eventName);
-            for (int i = 0; i < ev.Length / 2; i++)
-            {
-                eventEdges.Add((int)Char.GetNumericValue(ev[i * 2 + 2]));
-            }
-            foreach(int _edge in eventEdges)
-            {
-                Console.WriteLine((int)_edge);
-            }
-            Console.WriteLine();
-            eventList.Add(new Event(eventName, eventEdges));
-
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-
+            eventList.ElementAt(int.Parse(textBox1.Text)).HighlightEvent(graphics);
         }
+
     }
 }
 
@@ -107,20 +109,31 @@ public class Event
 {
     public Event(int _id, List<int> _edges) 
     {
+        Console.WriteLine();
+        Console.Write(_id);
         id = _id;
         edges = new List<int>();
         edges = _edges;
-        location = id * 100;
-        size = 50;
+        location = id * 200;
+        size = 100;
     }
-    public void DrawEvent(System.Drawing.Graphics graphics)
+    public void DrawEvent(Graphics graphics)
     {
         Console.Write((string)"Drawing Event");
         System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
             (location), 100, size, size);
         graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
-
+        //graphics.DrawRectangle(System.Drawing.Pens.Black, rectangle);
+        graphics.DrawString(id.ToString(), drawFont, drawBrush, location + 40, 137, drawFormat);
     }
+    //public void DrawEdges(Graphics graphics)
+    //{
+    //    Console.Write((string)"Drawing Edges");
+    //    foreach ( edge in edges)
+    //    {
+    //        edge.
+    //    }
+    //}
     public void HighlightEvent(System.Drawing.Graphics graphics)
     {
         System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
@@ -131,6 +144,10 @@ public class Event
     private List<int> edges;
     private int location;
     private int size;
+    private System.Drawing.Font drawFont = new System.Drawing.Font("Arial", 16);
+    private System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
+    private System.Drawing.StringFormat drawFormat = new System.Drawing.StringFormat();
+
 
 }
 
@@ -142,24 +159,32 @@ public class Arc
         id = nextID++;
         //current = _current;
         //next = _next;
-        current = id;
-        Random random = new Random();
-        next = id + random.Next(1,3);
+        current = _current;
+        next = _next;
         difference = next - current;
     }
     public void DrawArc(System.Drawing.Graphics graphics)
     {
-        int height = 35 + (int)(Math.Pow(10, difference));
+        //int height = 35 + (int)(Math.Pow(10, difference));
+        int height = difference * 50;
         Pen blackPen = new Pen(Color.Black, 1);
-        Rectangle rect = new Rectangle(25 + (current * 100), 85 - height, 100 + (difference * 100), height);
-
-        // Create start and sweep angles on ellipse.
-        float startAngle = 0.0F;
-        float sweepAngle = -180.0F;
-
-        // Draw arc to screen.
-        graphics.DrawArc(blackPen, rect, startAngle, sweepAngle);
-
+        Rectangle rect;
+        if (height > 0)
+        {
+            rect = new Rectangle(50 + (current * 200), 100 - height / 2, difference * 200, height);
+            float startAngle = 0.0F;
+            float sweepAngle = -180.0F;
+            graphics.DrawArc(blackPen, rect, startAngle, sweepAngle);
+            //graphics.DrawRectangle(blackPen, rect);
+        }
+        else
+        {
+            rect = new Rectangle(50 + (next * 200), 200 + height / 2, difference * -200, height * -1);
+            float startAngle = 0.0F;
+            float sweepAngle = 180.0F;
+            graphics.DrawArc(blackPen, rect, startAngle, sweepAngle);
+            //graphics.DrawRectangle(blackPen, rect);
+        }
     }
     public int id { get; set; }
     private int current;
