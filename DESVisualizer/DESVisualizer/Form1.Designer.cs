@@ -31,6 +31,7 @@
             this.DrawEvents = new System.Windows.Forms.Button();
             this.ImportButton = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.DrawArcs = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -63,7 +64,17 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(148, 26);
             this.textBox1.TabIndex = 4;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.KeyDown += this.textBox1_Enter;
+            //this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(650, 0);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textBox2.Name = "textBox1";
+            this.textBox2.Size = new System.Drawing.Size(148, 26);
+            this.textBox2.TabIndex = 4;
+            this.textBox2.KeyDown += this.textBox2_Enter;
             // 
             // DrawArcs
             // 
@@ -82,6 +93,7 @@
             this.ClientSize = new System.Drawing.Size(2552, 1000);
             this.Controls.Add(this.DrawArcs);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.ImportButton);
             this.Controls.Add(this.DrawEvents);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -97,6 +109,7 @@
         private System.Windows.Forms.Button DrawEvents;
         private System.Windows.Forms.Button ImportButton;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button DrawArcs;
     }
 }

@@ -24,10 +24,12 @@ namespace DESVisualizer
         }
 
         private System.Drawing.Graphics graphics;
-        private StreamReader sr = new StreamReader("event_net_list.txt");
+        private StreamReader sr = new StreamReader("event_net_list1.txt");
         private List<Event> eventList;
         private List<Arc> arcList;
-        
+        int highlightedEvent = -1;
+        int highlightedArc = -1;
+
         //private void drawArc(int current, int next)
         //{
         //    Rectangle rect = new Rectangle(25 + (current * 100), 35 - (next * 10), 100 + (next * 100), 35 + (next * 10));
@@ -97,10 +99,45 @@ namespace DESVisualizer
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void textBox1_Enter(object sender, KeyEventArgs e)
         {
-            eventList.ElementAt(int.Parse(textBox1.Text)).HighlightEvent(graphics);
+            int textboxValue;
+            if (int.TryParse(textBox1.Text, out textboxValue) && e.KeyCode == Keys.Enter)
+            {
+                if (Enumerable.Range(1, eventList.Count()).Contains(textboxValue))
+                {
+                    if (highlightedEvent != -1)
+                        eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, false);
+                    highlightedEvent = int.Parse(textBox1.Text) - 1; 
+                    eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, true);
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
+            }
         }
+        
+        private void textBox2_Enter(object sender, KeyEventArgs e)
+        {
+            int textboxValue;
+            if (int.TryParse(textBox2.Text, out textboxValue) && e.KeyCode == Keys.Enter)
+            {
+                if (Enumerable.Range(1, arcList.Count()).Contains(textboxValue))
+                {
+                    if (highlightedArc != -1)
+                        arcList.ElementAt(highlightedArc).HighlightArc(graphics, false);
+                    highlightedArc = int.Parse(textBox2.Text) - 1; 
+                    arcList.ElementAt(highlightedArc).HighlightArc(graphics, true);
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
+            }
+
+        }
+        
+        //private void textBox1_TextChanged(object sender, EventArgs e)
+        //{
+        //    eventList.ElementAt(int.Parse(textBox1.Text)).HighlightEvent(graphics);
+        //}
 
     }
 }
@@ -134,12 +171,16 @@ public class Event
     //        edge.
     //    }
     //}
-    public void HighlightEvent(System.Drawing.Graphics graphics)
+    public void HighlightEvent(System.Drawing.Graphics graphics, bool highlighted)
     {
         System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(
             (location), 100, size, size);
-        graphics.DrawEllipse(System.Drawing.Pens.Yellow, rectangle);
+        if (highlighted == true)
+            graphics.DrawEllipse(System.Drawing.Pens.Yellow, rectangle);
+        else
+            graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
     }
+
     public int id { get; }
     private List<int> edges;
     private int location;
@@ -184,6 +225,30 @@ public class Arc
             float sweepAngle = 180.0F;
             graphics.DrawArc(blackPen, rect, startAngle, sweepAngle);
             //graphics.DrawRectangle(blackPen, rect);
+        }
+    }
+    public void HighlightArc(System.Drawing.Graphics graphics, bool highlighted)
+    {
+        Pen pen;
+        Rectangle rect;
+        int height = difference * 50;
+        if (highlighted == true)
+            pen = new Pen(Color.Yellow, 1);
+        else
+            pen = new Pen(Color.Black, 1);
+        if (height > 0)
+        {
+            rect = new Rectangle(50 + (current * 200), 100 - height / 2, difference * 200, height);
+            float startAngle = 0.0F;
+            float sweepAngle = -180.0F;
+            graphics.DrawArc(pen, rect, startAngle, sweepAngle);
+        }
+        else
+        {
+            rect = new Rectangle(50 + (next * 200), 200 + height / 2, difference * -200, height * -1);
+            float startAngle = 0.0F;
+            float sweepAngle = 180.0F;
+            graphics.DrawArc(pen, rect, startAngle, sweepAngle);
         }
     }
     public int id { get; set; }
