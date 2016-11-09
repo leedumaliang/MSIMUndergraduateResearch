@@ -21,10 +21,13 @@ namespace DESVisualizer
             this.Paint += new PaintEventHandler(pictureBox1_Paint);
             eventList = new List<Event>();
             arcList = new List<Arc>();
+            textBox1.KeyDown += textBox1_Enter;
+            textBox2.KeyDown += textBox2_Enter;
         }
 
         private System.Drawing.Graphics graphics;
         private StreamReader sr = new StreamReader("event_net_list1.txt");
+        private StreamReader input = new StreamReader("input_file.txt");
         private List<Event> eventList;
         private List<Arc> arcList;
         int highlightedEvent = -1;
@@ -62,12 +65,8 @@ namespace DESVisualizer
         {
             foreach (Event ev in eventList)
             {
-                ev.DrawEvent(graphics); 
+                ev.DrawEvent(graphics);
             }
-        }
-
-        private void DrawArcs_Click(object sender, EventArgs e)
-        {
             foreach (Arc arc in arcList)
             {
                 arc.DrawArc(graphics);
@@ -76,18 +75,18 @@ namespace DESVisualizer
 
         private void ImportButton_Click(object sender, EventArgs e)
         {
-            int edgeCount = 0; 
+            int edgeCount = 0;
             while (sr.Peek() >= 0)
             {
                 string ev = sr.ReadLine();
                 int eventName = ev[0] - '0';
-                List<int> eventEdges = new List<int>(); 
+                List<int> eventEdges = new List<int>();
                 //Console.Write((char)eventName);
                 for (int i = 0; i < ev.Length / 2; i++)
                 {
                     eventEdges.Add(edgeCount++);
                     int edge = (int)char.GetNumericValue(ev[i * 2 + 2]);
-                    arcList.Add(new Arc(eventName, edge)); 
+                    arcList.Add(new Arc(eventName, edge));
                     //eventEdges.Add((int)Char.GetNumericValue(ev[i * 2 + 2]));
                 }
                 //foreach(int _edge in eventEdges)
@@ -108,14 +107,14 @@ namespace DESVisualizer
                 {
                     if (highlightedEvent != -1)
                         eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, false);
-                    highlightedEvent = int.Parse(textBox1.Text) - 1; 
+                    highlightedEvent = int.Parse(textBox1.Text) - 1;
                     eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, true);
                     e.Handled = true;
                     e.SuppressKeyPress = true;
                 }
             }
         }
-        
+
         private void textBox2_Enter(object sender, KeyEventArgs e)
         {
             int textboxValue;
@@ -125,7 +124,7 @@ namespace DESVisualizer
                 {
                     if (highlightedArc != -1)
                         arcList.ElementAt(highlightedArc).HighlightArc(graphics, false);
-                    highlightedArc = int.Parse(textBox2.Text) - 1; 
+                    highlightedArc = int.Parse(textBox2.Text) - 1;
                     arcList.ElementAt(highlightedArc).HighlightArc(graphics, true);
                     e.Handled = true;
                     e.SuppressKeyPress = true;
@@ -133,12 +132,56 @@ namespace DESVisualizer
             }
 
         }
-        
-        //private void textBox1_TextChanged(object sender, EventArgs e)
-        //{
-        //    eventList.ElementAt(int.Parse(textBox1.Text)).HighlightEvent(graphics);
-        //}
 
+        private void nextButton_Click(object sender, EventArgs e)
+        {
+            if (input.Peek() >= 0)
+            {
+                string ev = input.ReadLine();
+                int inputType = ev[0] - '0';
+                int modifiedElement = ev[2] - '0';
+                if (inputType == 0)
+                {
+                    if (Enumerable.Range(1, eventList.Count()).Contains(modifiedElement))
+                    {
+                        if (highlightedArc != -1)
+                        {
+                            arcList.ElementAt(highlightedArc).HighlightArc(graphics, false);
+                            highlightedArc = -1;
+                        }
+
+                        if (highlightedEvent != -1)
+                            eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, false);
+                        highlightedEvent = modifiedElement - 1;
+                        eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, true);
+                    }
+
+                }
+                else if (inputType == 1)
+                {
+                    if (Enumerable.Range(1, arcList.Count()).Contains(modifiedElement ))
+                    {
+                        if (highlightedArc != -1)
+                            arcList.ElementAt(highlightedArc).HighlightArc(graphics, false);
+
+                        if (highlightedEvent != -1)
+                        {
+                            highlightedArc = eventList.ElementAt(highlightedEvent).getNextArc(arcList, modifiedElement);
+                            arcList.ElementAt(highlightedArc).HighlightArc(graphics, true);
+                        }
+
+                        else
+                        {
+
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
     }
 }
 
@@ -180,7 +223,16 @@ public class Event
         else
             graphics.DrawEllipse(System.Drawing.Pens.Black, rectangle);
     }
-
+    
+    public int getNextArc(List<Arc> arcList, int nextEvent)
+    {
+        foreach (int edge in edges)
+        {
+            if (arcList.ElementAt(edge).next == nextEvent)
+                return edge;
+        }
+        return -1;
+    }
     public int id { get; }
     private List<int> edges;
     private int location;
@@ -252,7 +304,7 @@ public class Arc
         }
     }
     public int id { get; set; }
-    private int current;
-    private int next;
+    public int current { get; }
+    public int next { get; }
     private int difference;
 }
