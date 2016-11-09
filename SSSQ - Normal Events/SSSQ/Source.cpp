@@ -9,7 +9,8 @@ public:
 	NextEntityEvent(Source *source)
 	{ 
 		_source = source; 
-		name = "NextEntity";
+//		name = "NextEntity";
+		name = "0";
 	};
 	void Execute()
 	{

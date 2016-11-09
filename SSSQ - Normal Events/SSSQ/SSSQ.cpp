@@ -20,7 +20,8 @@ public:
 	{
 		_sssq = sssq;
 		_en = en;
-		name = "Arrive";
+//		name = "Arrive";
+		name = "1";
 	}
 
 	void Execute()
@@ -55,7 +56,8 @@ public:
 	ServeEvent(SSSQ *sssq)
 	{
 		_sssq = sssq;
-		name = "Serve";
+//		name = "Serve";
+		name = "2";
 	}
 
 	void Execute()
@@ -89,7 +91,8 @@ public:
 	{
 		_sssq = sssq;
 		_en = en;
-		name = "Depart";
+//		name = "Depart";
+		name = "3";
 	}
 
 	void Execute()

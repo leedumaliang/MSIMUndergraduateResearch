@@ -24,7 +24,7 @@ int main(void)
 		{
 			WriteFile(hPipe,
 				"Write to File\n",
-				12,   // = length of string + terminating '\0' !!!
+				15,   // = length of string + terminating '\0' !!!
 				&dwWritten,
 				NULL);
 		//	while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)

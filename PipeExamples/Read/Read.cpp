@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <tchar.h>
+#include <iostream>
 
 int main(void)
 {
@@ -10,8 +11,7 @@ int main(void)
 	DWORD dwRead;
 	DWORD dwWritten;
 
-//	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\Pipe"),
-	hPipe = CreateNamedPipe(TEXT(".\\Pipe"),
+	hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\Pipe"),
 		PIPE_ACCESS_DUPLEX | PIPE_TYPE_BYTE | PIPE_READMODE_BYTE,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
 		PIPE_WAIT,
 		1,
@@ -36,6 +36,14 @@ int main(void)
 				//	12,   // = length of string + terminating '\0' !!!
 				//	&dwWritten,
 				//	NULL);
+
+				std::cin.get();
+
+				WriteFile(hPipe,
+						  "Continue\n",
+						  10,
+						  &dwWritten,
+						  NULL);
 			}
 		}
 
