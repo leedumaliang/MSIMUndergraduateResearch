@@ -13,6 +13,14 @@ namespace DESVisualizer
 {
     public partial class Form1 : Form
     {
+        List<EventDisplay> displayEventList;
+        //DataTable displayEventTable;
+        //DataColumn column;
+        //DataRow row;
+        //DataTable theDisplay;
+        //BindingSource bindingSourceTable1;
+        //DataGridView dataGridViewTable = new DataGridView();
+
         public Form1()
         {
             InitializeComponent();
@@ -23,15 +31,49 @@ namespace DESVisualizer
             arcList = new List<Arc>();
             textBox1.KeyDown += textBox1_Enter;
             textBox2.KeyDown += textBox2_Enter;
-        }
 
+
+            //displayEventTable = new DataTable();
+            //bindingSourceTable1 = new BindingSource();
+            //column = new DataColumn();
+            //column.DataType = Type.GetType("System.String");
+            //column.ColumnName = "Event";
+            //displayEventTable.Columns.Add(column);
+
+            //column = new DataColumn();
+            //column.DataType = Type.GetType("System.String");
+            //column.ColumnName = "Time";
+            //displayEventTable.Columns.Add(column);
+
+            //bindingSourceTable1.DataSource = displayEventTable;
+
+
+            displayEventList = new List<EventDisplay>();
+            displayEventList.Add(new EventDisplay("No Events Yet", "No Times Yet"));
+            eventDisplayBindingSource.DataSource = displayEventList;
+            //bindingSource1 = new BindingSource();
+            //bindingSource1.DataSource = displayEventList;
+            //textBox4.DataBindings.Add("Text", bindingSource1, "Name");
+            //textBox3.DataBindings.Add("Text", bindingSource1, "Time");
+
+            //dataGridViewTable.AutoGenerateColumns = true;
+            //dataGridViewTable.AutoSize = true;
+            //dataGridViewTable.DataSource = bindingSourceTable1;
+
+            
+        }
+        
         private System.Drawing.Graphics graphics;
-        private StreamReader sr = new StreamReader("event_net_list1.txt");
+        private StreamReader sr = new StreamReader("event_net_list.txt");
         private StreamReader input = new StreamReader("input_file.txt");
         private List<Event> eventList;
         private List<Arc> arcList;
         int highlightedEvent = -1;
         int highlightedArc = -1;
+
+        //List<EventDisplay> displayEventList;
+        
+        //BindingSource bindingSource1;
 
         //private void drawArc(int current, int next)
         //{
@@ -108,7 +150,7 @@ namespace DESVisualizer
                     if (highlightedEvent != -1)
                         eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, false);
                     highlightedEvent = int.Parse(textBox1.Text) - 1;
-                    eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, true);
+
                     e.Handled = true;
                     e.SuppressKeyPress = true;
                 }
@@ -126,6 +168,8 @@ namespace DESVisualizer
                         arcList.ElementAt(highlightedArc).HighlightArc(graphics, false);
                     highlightedArc = int.Parse(textBox2.Text) - 1;
                     arcList.ElementAt(highlightedArc).HighlightArc(graphics, true);
+                    eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, true);
+
                     e.Handled = true;
                     e.SuppressKeyPress = true;
                 }
@@ -154,6 +198,14 @@ namespace DESVisualizer
                             eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, false);
                         highlightedEvent = modifiedElement - 1;
                         eventList.ElementAt(highlightedEvent).HighlightEvent(graphics, true);
+
+                        if (displayEventList.Count > 0)
+                        {
+                            displayEventList.RemoveAt(0);
+
+                            eventDisplayBindingSource.ResetBindings(false);
+                        }
+
                     }
 
                 }
@@ -167,7 +219,24 @@ namespace DESVisualizer
                         if (highlightedEvent != -1)
                         {
                             highlightedArc = eventList.ElementAt(highlightedEvent).getNextArc(arcList, modifiedElement);
+                            string eventToDisplay = "1";
+                            if (highlightedArc==0)
+                            {
+                                eventToDisplay = "2";
+                           
+                            }
+                            else if (highlightedArc==2)
+                            {
+                                eventToDisplay = "3";
+                            }
                             arcList.ElementAt(highlightedArc).HighlightArc(graphics, true);
+                            displayEventList.Add(new EventDisplay(eventToDisplay, "Don't know yet"));
+                            eventDisplayBindingSource.ResetBindings(false);
+
+
+                  
+
+
                         }
 
                         else
@@ -181,6 +250,43 @@ namespace DESVisualizer
 
                 }
             }
+        }
+
+
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public DataTable TransposeDataTable(DataTable dt)
+        {
+            DataTable transposedTable = new DataTable();
+
+            DataColumn firstColumn = new DataColumn(dt.Columns[0].ColumnName);
+            transposedTable.Columns.Add(firstColumn);
+
+            //Add a column for each row in first data table
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataColumn dc = new DataColumn(dt.Rows[i][0].ToString());
+                transposedTable.Columns.Add(dc);
+            }
+
+            for (int j = 1; j < dt.Columns.Count; j++)
+            {
+                DataRow dr = transposedTable.NewRow();
+                dr[0] = dt.Columns[j].ColumnName;
+
+                for (int k = 0; k < dt.Rows.Count; k++)
+                {
+                    dr[k + 1] = dt.Rows[k][j];
+                }
+
+                transposedTable.Rows.Add(dr);
+            }
+
+            return transposedTable;
         }
     }
 }
@@ -308,3 +414,32 @@ public class Arc
     public int next { get; }
     private int difference;
 }
+
+public class EventDisplay
+{
+    private string eventName;
+    public string Event
+    {
+        get { return eventName; }
+    }
+
+    private string eventTime;
+    public string Time
+    {
+        get { return eventTime; }
+    }
+
+    public EventDisplay (string name, string time)
+    {
+        eventName = name;
+        eventTime = time;
+    }
+
+
+
+
+
+
+
+}
+

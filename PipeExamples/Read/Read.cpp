@@ -4,6 +4,7 @@
 #include <tchar.h>
 #include <iostream>
 
+
 int main(void)
 {
 	HANDLE hPipe;
