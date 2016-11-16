@@ -31,7 +31,11 @@ namespace DESVisualizer
             arcList = new List<Arc>();
             textBox1.KeyDown += textBox1_Enter;
             textBox2.KeyDown += textBox2_Enter;
+<<<<<<< Updated upstream
+=======
+
         }
+>>>>>>> Stashed changes
 
 
             //displayEventTable = new DataTable();
